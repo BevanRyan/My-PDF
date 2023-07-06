@@ -8,22 +8,22 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
-def split_text_cached(text):
-    text_splitter = CharacterTextSplitter(
+@st.experimental.singleton
+def get_text_splitter():
+    return CharacterTextSplitter(
         separator="\n",
         chunk_size=1000,
         chunk_overlap=200,
         length_function=len
     )
-    return text_splitter.split_text(text)
 
-@st.cache(allow_output_mutation=True)
-def create_embeddings():
+@st.experimental.singleton
+def get_openai_embeddings():
     return OpenAIEmbeddings()
 
-@st.cache(allow_output_mutation=True)
-def create_knowledge_base(chunks, embeddings):
-    return FAISS.from_texts(chunks, embeddings)
+@st.experimental.singleton
+def get_llm_model():
+    return OpenAI()
 
 def main():
     load_dotenv()
@@ -41,18 +41,19 @@ def main():
             text += page.extract_text()
         
         # split into chunks
-        chunks = split_text_cached(text)
+        text_splitter = get_text_splitter()
+        chunks = text_splitter.split_text(text)
       
         # create embeddings
-        embeddings = create_embeddings()
-        knowledge_base = create_knowledge_base(chunks, embeddings)
+        embeddings = get_openai_embeddings()
+        knowledge_base = FAISS.from_texts(chunks, embeddings)
       
         # show user input
         user_question = st.text_input("Ask a question about your PDF:")
         if user_question:
             docs = knowledge_base.similarity_search(user_question)
         
-            llm = OpenAI()
+            llm = get_llm_model()
             chain = load_qa_chain(llm, chain_type="stuff")
             with get_openai_callback() as cb:
                 response = chain.run(input_documents=docs, question=user_question)
