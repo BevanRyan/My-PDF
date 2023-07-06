@@ -7,7 +7,7 @@ from PyPDF2 import PdfReader
 def load_pdf_reader():
     return PdfReader
 pdf_reader = load_pdf_reader()
-def load_model
+
 
 
 from langchain.text_splitter import CharacterTextSplitter
