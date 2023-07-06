@@ -1,63 +1,13 @@
 from dotenv import load_dotenv
 import streamlit as st
 from PyPDF2 import PdfReader
-@st.cache(resources={
-    'pdf_reader': st.cache.Permanent(PdfReader)
-})
-def load_pdf_reader():
-    return PdfReader
-
-pdf_reader = load_pdf_reader()
-
-
 from langchain.text_splitter import CharacterTextSplitter
-@st.cache(resources={
-    'text_splitter': st.cache.Permanent(CharacterTextSplitter)
-})
-def load_text_splitter():
-    return CharacterTextSplitter
-text_splitter = load_text_splitter()
-
 from langchain.embeddings.openai import OpenAIEmbeddings
-@st.cache(resources={
-    'openai_embeddings': st.cache.Permanent(OpenAIEmbeddings)
-})
-def load_openai_embeddings():
-    return OpenAIEmbeddings
-openai_embeddings = load_openai_embeddings()
-
-
 from langchain.vectorstores import FAISS
-@st.cache(resources={
-    'faiss': st.cache.Permanent(FAISS)
-})
-def load_faiss():
-    return FAISS
-faiss = load_faiss()
-
 from langchain.chains.question_answering import load_qa_chain
-@st.cache(resources={
-    'qa_chain': st.cache.Permanent(load_qa_chain)
-})
-def load_question_answering_chain():
-    return load_qa_chain
-question_answering_chain = load_question_answering_chain()
-
 from langchain.llms import OpenAI
-@st.cache(resources={
-    'openai': st.cache.Permanent(OpenAI)
-})
-def load_openai():
-    return OpenAI
-openai_instance = load_openai()
-
 from langchain.callbacks import get_openai_callback
-@st.cache(resources={
-    'openai_callback': st.cache.Permanent(get_openai_callback)
-})
-def load_openai_callback():
-    return get_openai_callback
-openai_callback = load_openai_callback()
+
 
 
 def main():
