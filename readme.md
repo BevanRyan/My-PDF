@@ -44,7 +44,7 @@ Preload PDF Reader: Instead of creating a new PdfReader object for each file upl
 
 Lazy Loading: Consider loading the language models, embeddings, and vector stores lazily, only when they are actually required. This can reduce startup time and memory usage.
 
-Cache Similarity Search: Implement a caching mechanism to store the results of similarity searches. If a user asks the same question multiple times, you can retrieve the previously computed results from the cache instead of performing the search again. This can save processing time for repeated queries.
+Cache Similarity Search: Implement a caching mechanism to store the results of similarity searches. If a user asks the same question multiple times, you can retrieve the previously computed results from the cache instead of performing the search again. This can save processing time for repeated queries. Wactch this https://www.youtube.com/watch?v=lYDiSCDcxmc
 
 Optimize I/O Operations: Depending on the size and frequency of PDF uploads, you may need to optimize I/O operations. For example, you can explore using a faster file storage system or optimize the way PDFs are read and processed.
 
