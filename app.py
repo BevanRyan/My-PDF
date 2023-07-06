@@ -18,6 +18,9 @@ from langchain.callbacks import get_openai_callback
     'openai_callback': st.cache.Permanent(get_openai_callback)
 })
 
+def my_function():
+    load_dotenv()
+
 def main():
     load_dotenv()
     st.set_page_config(page_title="Ask your PDF")
