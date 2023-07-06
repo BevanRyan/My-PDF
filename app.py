@@ -8,18 +8,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
-@st.cache(resources={
-    'pdf_reader': st.cache.Permanent(PdfReader),
-    'text_splitter': st.cache.Permanent(CharacterTextSplitter),
-    'embeddings': st.cache.Permanent(OpenAIEmbeddings),
-    'vector_stores': st.cache.Permanent(FAISS),
-    'qa_chain': st.cache.Permanent(load_qa_chain),
-    'llms': st.cache.Permanent(OpenAI),
-    'openai_callback': st.cache.Permanent(get_openai_callback)
-})
 
-def my_function():
-    load_dotenv()
 
 def main():
     load_dotenv()
