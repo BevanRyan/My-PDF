@@ -7,12 +7,7 @@ from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
-@st.cache
-def initialize_text_splitter():
-    # Initialize the text splitter here
-    splitter = CharacterTextSplitter()
-    return splitter
-splitter = initialize_text_splitter()
+
 
 
 def main():
