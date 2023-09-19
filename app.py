@@ -8,15 +8,14 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
-from functools import lru_cache
+@st.cache
+def get_qa_response(docs, user_question):
+    llm = OpenAI()
+    chain = load_qa_chain(llm, chain_type="stuff")
+    with get_openai_callback() as cb:
+        response = chain.run(input_documents=docs, question=user_question)
+    return response
 
-# create an embeddings object
-embeddings = OpenAIEmbeddings()
-
-# decorate the embeddings function with caching
-@lru_cache(maxsize=None)
-def get_embeddings(text):
-  return embeddings(text)
 
 
 
