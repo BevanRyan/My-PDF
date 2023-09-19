@@ -8,6 +8,16 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
+from functools import lru_cache
+
+# create an embeddings object
+embeddings = OpenAIEmbeddings()
+
+# decorate the embeddings function with caching
+@lru_cache(maxsize=None)
+def get_embeddings(text):
+  return embeddings(text)
+
 
 
 def main():
