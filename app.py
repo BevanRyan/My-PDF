@@ -8,8 +8,7 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
-# import functools module
-import functools
+
 
 def main():
     load_dotenv()
@@ -46,15 +45,8 @@ def main():
         
         llm = OpenAI()
         chain = load_qa_chain(llm, chain_type="stuff")
-        
-        # decorate chain.run with lru_cache and set maxsize to 10
-        @functools.lru_cache(maxsize=10)
-        def cached_run(input_documents, question):
-          return chain.run(input_documents, question)
-        
         with get_openai_callback() as cb:
-          # call cached_run instead of chain.run
-          response = cached_run(input_documents=docs, question=user_question)
+          response = chain.run(input_documents=docs, question=user_question)
           print(cb)
            
         st.write(response)
@@ -62,5 +54,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
