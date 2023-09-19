@@ -12,6 +12,8 @@ from langchain.callbacks import get_openai_callback
 class SessionState:
     def __init__(self):
         self.pdf = None
+        self.text_extracted = False
+        self.embedding_done = False
 
 def main():
     load_dotenv()
@@ -35,31 +37,41 @@ def main():
         for page in pdf_reader.pages:
             text += page.extract_text()
         
-        # split into chunks
-        text_splitter = CharacterTextSplitter(
-            separator="\n",
-            chunk_size=1000,
-            chunk_overlap=200,
-            length_function=len
-        )
-        chunks = text_splitter.split_text(text)
+        # Set text extraction completion in session state
+        state.text_extracted = True
         
-        # create embeddings
-        embeddings = OpenAIEmbeddings()
-        knowledge_base = FAISS.from_texts(chunks, embeddings)
-        
-        # show user input
-        user_question = st.text_input("Ask a question about your PDF:")
-        if user_question:
-            docs = knowledge_base.similarity_search(user_question)
+        # Check if text extraction is complete
+        if state.text_extracted:
+            # split into chunks
+            text_splitter = CharacterTextSplitter(
+                separator="\n",
+                chunk_size=1000,
+                chunk_overlap=200,
+                length_function=len
+            )
+            chunks = text_splitter.split_text(text)
             
-            llm = OpenAI()
-            chain = load_qa_chain(llm, chain_type="stuff")
-            with get_openai_callback() as cb:
-                response = chain.run(input_documents=docs, question=user_question)
-                print(cb)
+            # Set embedding completion in session state
+            state.embedding_done = True
             
-            st.write(response)
+            # Check if embeddings are done
+            if state.embedding_done:
+                # create embeddings
+                embeddings = OpenAIEmbeddings()
+                knowledge_base = FAISS.from_texts(chunks, embeddings)
+                
+                # show user input
+                user_question = st.text_input("Ask a question about your PDF:")
+                if user_question:
+                    docs = knowledge_base.similarity_search(user_question)
+                    
+                    llm = OpenAI()
+                    chain = load_qa_chain(llm, chain_type="stuff")
+                    with get_openai_callback() as cb:
+                        response = chain.run(input_documents=docs, question=user_question)
+                        print(cb)
+                    
+                    st.write(response)
 
 if __name__ == '__main__':
     main()
