@@ -8,6 +8,9 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
+# Importing SessionState from https://gist.github.com/tvst/036da038ab3e999a64497f42de966a92
+from session_state import SessionState
+
 # Adding a function to process the PDF in chunks
 def process_pdf(pdf):
     pdf_reader = PdfReader(pdf)
@@ -29,12 +32,19 @@ def main():
     st.set_page_config(page_title="Ask your PDF")
     st.header("Ask your PDF 💬")
     
+    # Create a session state object
+    state = SessionState.get(pdf=None)
+    
     # upload file
     pdf = st.file_uploader("Upload your PDF", type="pdf")
     
-    # extract the text
+    # Save the PDF in session state
     if pdf is not None:
-        text = process_pdf(pdf)
+        state.pdf = pdf
+    
+    # Check if PDF is uploaded
+    if state.pdf is not None:
+        text = process_pdf(state.pdf)
         
         # split into chunks
         text_splitter = CharacterTextSplitter(
