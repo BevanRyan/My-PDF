@@ -1,6 +1,8 @@
+# Optimized code with some optimizations
+# Use PyMuPDF for faster text extraction
 from dotenv import load_dotenv
 import streamlit as st
-from PyPDF2 import PdfReader
+import fitz  # PyMuPDF
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
@@ -8,32 +10,21 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 
-# Import SessionState class
-class SessionState:
-    def __init__(self):
-        self.pdf = None
-
 def main():
     load_dotenv()
     st.set_page_config(page_title="Ask your PDF")
     st.header("Ask your PDF 💬")
     
-    # Create a session state object
-    state = SessionState()
-    
     # upload file
     pdf = st.file_uploader("Upload your PDF", type="pdf")
     
-    # Save the PDF in session state
+    # extract the text using PyMuPDF
     if pdf is not None:
-        state.pdf = pdf
-    
-    # Check if PDF is uploaded
-    if state.pdf is not None:
-        pdf_reader = PdfReader(state.pdf)
+        pdf_doc = fitz.open(stream=pdf.read(), filetype="pdf")
         text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text()
+        for page_num in range(pdf_doc.page_count):
+            page = pdf_doc.load_page(page_num)
+            text += page.get_text()
         
         # split into chunks
         text_splitter = CharacterTextSplitter(
@@ -63,3 +54,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
